@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  annotations:
+    strategy.spinnaker.io/max-version-history: '2'
+    traffic.spinnaker.io/load-balancers: '["service petclinic-prod-service"]'
+  labels:
+    tier: petclinic-prod
+  name: petclinic-prod
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      tier: petclinic-prod
+  template:
+    metadata:
+      labels:
+        tier: petclinic-prod
+    spec:
+      containers:
+        - env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: mysql-pass
+            - name: MYSQL_DATABASE
+              value: petclinic-prod-mysql
+            - name: SPRING_PROFILES_ACTIVE
+              value: mysql
+          image: harbor.pks.pivot.host/tybritten/spring-petclinic
+          name: petclinic-prod
+      imagePullSecrets:
+        - name: harbor
