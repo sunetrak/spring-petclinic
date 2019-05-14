@@ -1,24 +1,21 @@
 apiVersion: apps/v1
 kind: ReplicaSet
 metadata:
-  annotations:
-    strategy.spinnaker.io/max-version-history: '2'
-    traffic.spinnaker.io/load-balancers: '["service ${service-name}"]'
   labels:
-    tier: petclinic-dev
-  name: petclinic-dev
+    tier: petclinic-${version}
+  name: petclinic-${version}
 spec:
   replicas: ${replicas:1}
   selector:
     matchLabels:
-      tier: petclinic-dev
+      tier: petclinic-${version}
   template:
     metadata:
       labels:
-        tier: petclinic-dev
+        tier: petclinic-${version}
     spec:
       containers:
         - image: harbor.pks.pivot.host/tybritten/spring-petclinic
-          name: petclinic-dev
+          name: petclinic-${version}
       imagePullSecrets:
         - name: harbor
